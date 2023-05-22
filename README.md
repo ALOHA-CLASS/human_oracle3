@@ -4,7 +4,7 @@
 https://youtu.be/_JMsueZgdc0?list=PL4C2AmBC9jObqw1BDuUjTl50CMu1CpiiL
 
 ## 수업 다시 보기
-https://www.youtube.com/playlist?list=PL4C2AmBC9jOZ-CwqrzqOoUv58wSxlJk-o
+https://www.youtube.com/playlist?list=PL4C2AmBC9jObbWm4FVJi4Mv1eJmMSYMtK
 
 <br><br>
 
