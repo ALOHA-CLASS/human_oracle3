@@ -440,7 +440,7 @@ FROM employees;
 -- TO_DATE( 데이터 )
 -- : 문자형 데이터를 날짜형 데이터로 변환하는 함수
 SELECT 20230522 AS 문자
-      ,TO_DATE(20230522) AS 날짜
+      ,TO_DATE('20230522', 'YYYYMMDD') AS 날짜
 FROM dual;
 
 -- 38.
@@ -721,6 +721,651 @@ ALTER TABLE MS_STUDENT DROP COLUMN DEPT_NO;
 -- 56.
 -- MS_STUDENT 테이블을 삭제하시오.
 DROP TABLE MS_STUDENT;
+
+
+-- 57.
+--
+CREATE TABLE MS_STUDENT (
+     ST_NO      NUMBER          NOT NULL 
+    ,NAME       VARCHAR2(20)    NOT NULL
+    ,BIRTH      DATE            NOT NULL
+    ,EMAIL      VARCHAR2(100)   NOT NULL
+    ,ADDRESS    VARCHAR2(1000)  NULL
+    ,MJ_NO      NUMBER          NOT NULL
+    ,GENDER     CHAR(6)         DEFAULT '기타'    NOT NULL
+    ,STATUS     VARCHAR2(10)    DEFAULT '대기'    NOT NULL
+    ,ADM_DATE   DATE    NULL
+    ,GRD_DATE   DATE    NULL
+    ,REG_DATE   DATE    DEFAULT sysdate NOT NULL
+    ,UPD_DATE   DATE    DEFAULT sysdate NOT NULL
+    ,ETC        VARCHAR2(1000)  DEFAULT '없음' NULL
+    ,
+    CONSTRAINT MS_STUDENT_PK PRIMARY KEY(ST_NO) ENABLE
+);
+
+-- UQ (고유키) 추가
+ALTER TABLE MS_STUDENT ADD CONSTRAINT MS_STUDENT_UK1 UNIQUE ( EMAIL ) ENABLE;
+
+COMMENT ON TABLE MS_STUDENT IS '학생들의 정보를 관리한다.';
+COMMENT ON COLUMN MS_STUDENT.ST_NO IS '학생 번호';
+COMMENT ON COLUMN MS_STUDENT.NAME IS '이름';
+COMMENT ON COLUMN MS_STUDENT.BIRTH IS '생년월일';
+COMMENT ON COLUMN MS_STUDENT.EMAIL IS '이메일';
+COMMENT ON COLUMN MS_STUDENT.ADDRESS IS '주소';
+COMMENT ON COLUMN MS_STUDENT.MJ_NO IS '전공번호';
+
+COMMENT ON COLUMN MS_STUDENT.GENDER IS '성별';
+COMMENT ON COLUMN MS_STUDENT.STATUS IS '재적';
+COMMENT ON COLUMN MS_STUDENT.ADM_DATE IS '입학일자';
+COMMENT ON COLUMN MS_STUDENT.GRD_DATE IS '졸업일자';
+
+COMMENT ON COLUMN MS_STUDENT.REG_DATE IS '등록일자';
+COMMENT ON COLUMN MS_STUDENT.UPD_DATE IS '수정일자';
+COMMENT ON COLUMN MS_STUDENT.ETC IS '특이사항';
+
+-- 58.
+-- 데이터 삽입 (INSERT)
+INSERT INTO MS_STUDENT ( ST_NO, NAME, BIRTH, EMAIL, ADDRESS, MJ_NO, 
+                        GENDER, STATUS, ADM_DATE, GRD_DATE, REG_DATE, UPD_DATE, ETC )
+VALUES ( '20180001', '최서아', '991005', 'csa@univ.ac.kr', '서울', 'I01',
+         '여', '재학', '2018/03/01', NULL, sysdate, sysdate, NULL );
+
+
+INSERT INTO MS_STUDENT ( ST_NO, NAME, BIRTH, EMAIL, ADDRESS, MJ_NO, 
+                        GENDER, STATUS, ADM_DATE, GRD_DATE, REG_DATE, UPD_DATE, ETC )
+VALUES ( '20210001', '박서준', TO_DATE('2002/05/04', 'YYYY/MM/DD'), 'psj@univ.ac.kr', '서울', 'B02',
+         '남', '재학', TO_DATE('2021/03/01', 'YYYY/MM/DD'), NULL, sysdate, sysdate, NULL );
+
+
+INSERT INTO MS_STUDENT ( ST_NO, NAME, BIRTH, EMAIL, ADDRESS, MJ_NO, 
+                        GENDER, STATUS, ADM_DATE, GRD_DATE, REG_DATE, UPD_DATE, ETC )
+VALUES ( '20210002', '김아윤', TO_DATE('2002/05/04', 'YYYY/MM/DD'), 'kay@univ.ac.kr', '인천', 'S01',
+         '여', '재학', TO_DATE('2021/03/01', 'YYYY/MM/DD'), NULL, sysdate, sysdate, NULL );
+
+INSERT INTO MS_STUDENT ( ST_NO, NAME, BIRTH, EMAIL, ADDRESS, MJ_NO, 
+                        GENDER, STATUS, ADM_DATE, GRD_DATE, REG_DATE, UPD_DATE, ETC )
+VALUES ( '20160001', '정수안', TO_DATE('1997/02/10', 'YYYY/MM/DD'), 'jsa@univ.ac.kr', '경남', 'J01',
+         '여', '재학', TO_DATE('2016/03/01', 'YYYY/MM/DD'), NULL, sysdate, sysdate, NULL );
+
+INSERT INTO MS_STUDENT ( ST_NO, NAME, BIRTH, EMAIL, ADDRESS, MJ_NO, 
+                        GENDER, STATUS, ADM_DATE, GRD_DATE, REG_DATE, UPD_DATE, ETC )
+VALUES ( '20150010', '윤도현', TO_DATE('1996/03/11', 'YYYY/MM/DD'), 'ydh@univ.ac.kr', '제주', 'K01',
+         '남', '재학', TO_DATE('2016/03/01', 'YYYY/MM/DD'), NULL, sysdate, sysdate, NULL );
+
+
+INSERT INTO MS_STUDENT ( ST_NO, NAME, BIRTH, EMAIL, ADDRESS, MJ_NO, 
+                        GENDER, STATUS, ADM_DATE, GRD_DATE, REG_DATE, UPD_DATE, ETC )
+VALUES ( '20130007', '안아람', TO_DATE('1994/11/24', 'YYYY/MM/DD'), 'aar@univ.ac.kr', '경기', 'Y01',
+         '여', '재학', TO_DATE('2013/03/01', 'YYYY/MM/DD'), NULL, sysdate, sysdate, '영상예술 특기자' );
+
+
+INSERT INTO MS_STUDENT ( ST_NO, NAME, BIRTH, EMAIL, ADDRESS, MJ_NO, 
+                        GENDER, STATUS, ADM_DATE, GRD_DATE, REG_DATE, UPD_DATE, ETC )
+VALUES ( '20110002', '한성호', TO_DATE('1992/10/07', 'YYYY/MM/DD'), 'hsh@univ.ac.kr', '서울', 'E03',
+         '남', '재학', TO_DATE('2015/03/01', 'YYYY/MM/DD'), NULL, sysdate, sysdate, NULL );
+
+SELECT * FROM MS_STUDENT;
+
+-- 59.
+-- MS_STUDENT 테이블의 데이터를 수정
+-- UPDATE
+/*
+    UPDATE 테이블명
+       SET 컬럼1 = 변경할 값,
+           컬럼2 = 변경할 값,
+           ...
+   [WHERE] 조건;
+*/
+-- 1) 학생번호가 20160001 인 학생의 주소를 '서울'로,
+--    재적상태를 '휴학'으로 수정하시오.
+UPDATE MS_STUDENT
+   SET address = '서울'
+      ,status = '휴학'
+WHERE st_no = 20160001;
+
+-- 2) 학생번호가 20150010 인 학생의 주소를 '서울'로,
+--    재적 상태를 '졸업', 졸업일자를 '20200220', 수정일자 현재날짜로 
+--    그리고 특이사항을 '수석'으로 수정하시오.
+UPDATE MS_STUDENT
+   SET address = '서울', status = '졸업', grd_date = '2020/02/02',
+       upd_date = sysdate, etc = '수석'
+ WHERE st_no = 20150010;
+ 
+ 
+-- 3) 학생번호가 20130007 인 학생의 재적 상태를 '졸업', 졸업일자를 '20200220', 
+--    수정일자 현재날짜로 수정하시오.
+UPDATE MS_STUDENT
+   SET status = '졸업', 
+       grd_date = '2020/02/02',
+       upd_date = sysdate
+ WHERE st_no = 20130007;
+
+-- 4) 학생번호가 20110002 인 학생의 재적 상태를 '퇴학', 
+--    수정일자를 현재날짜, 특이사항 '자진 퇴학' 으로 수정하시오.
+UPDATE MS_STUDENT
+   SET status = '퇴학', 
+       upd_date = sysdate,
+       etc = '자진 퇴학'
+ WHERE st_no = 20110002;
+
+
+SELECT * FROM MS_STUDENT;
+
+
+-- 60.
+-- MS_STUDENT 테이블에서 학번이 20110002 인 학생을 삭제하시오.
+DELETE FROM MS_STUDENT WHERE ST_NO = 20110002;
+
+-- 61.
+-- MS_STUDENT 테이블의 모든 속성을 조회하시오.
+SELECT * 
+FROM MS_STUDENT;
+
+-- 62.
+-- MS_STUDENT 테이블을 조회하여 MS_STUDENT_BACK 테이블 생성하시오.
+-- 백업 테이블 만들기
+CREATE TABLE MS_STUDENT_BACK
+AS SELECT * FROM MS_STUDENT;
+
+SELECT * FROM MS_STUDENT_BACK;
+
+-- 63.
+-- MS_STUDENT 테이블의 튜플을 삭제하시오.
+DELETE FROM MS_STUDENT;
+
+SELECT * FROM MS_STUDENT;
+
+-- 64.
+-- MS_STUDENT_BACK 테이블의 모든 속성을 조회하여
+-- MS_STUDENT 테이블에 삽입하시오.
+INSERT INTO MS_STUDENT 
+SELECT * FROM MS_STUDENT_BACK;
+
+SELECT * FROM MS_STUDENT;
+
+-- 65.
+-- MS_STUDENT 테이블의 성별(gender) 속성에 대하여,
+-- ('여', '남', '기타') 값만 입력가능하도록 제약조건을 추가하시오.
+ALTER TABLE MS_STUDENT
+ADD CONSTRAINT MS_STD_GENDER_CHECK
+CHECK (gender IN ('여','남', '기타') );
+
+UPDATE MS_STUDENT
+SET gender = '???'
+;
+-- * 지정한 값이 아닌 다른 값을 입력/수정하는 경우
+-- "체크 제약조건(HR.MS_STD_GENDER_CHECK)이 위배되었습니다" 에러 발생
+
+-- KEY
+-- 기본키 (PRIMARY KEY)
+-- : 중복 불가, NULL 불가(필수 입력)
+--   * 해당 테이블의 데이터를 고유하게 구분할 수 있는 속성으로 지정
+
+-- 고유키 (UNIQUE KEY)
+-- : 중복 불가, NULL 허용
+--   * 중복되지 않아야할 데이터(ID, 주민번호, 이메일, ...)
+
+
+-- 66.
+-- 테이블 기술서를 참고하여 MS_USER 테이블을 생성하시오.
+CREATE TABLE MS_USER (
+    USER_NO     NUMBER            NOT NULL    PRIMARY KEY ,
+    USER_ID     VARCHAR2(100)     NOT NULL    UNIQUE ,
+    USER_PW     VARCHAR2(200)     NOT NULL ,
+    USER_NAME   VARCHAR2(50)      NOT NULL ,
+    BIRTH       DATE              NOT NULL ,
+    TEL         VARCHAR2(20)      NOT NULL    UNIQUE ,
+    ADDRESS     VARCHAR2(200)     NULL ,
+    REG_DATE    DATE              DEFAULT sysdate NOT NULL,
+    UPD_DATE    DATE              DEFAULT sysdate NOT NULL
+);
+
+COMMENT ON TABLE MS_USER IS '회원';
+COMMENT ON COLUMN MS_USER.USER_NO IS '회원번호';
+COMMENT ON COLUMN MS_USER.USER_ID IS '아이디';
+COMMENT ON COLUMN MS_USER.USER_PW IS '비밀번호';
+COMMENT ON COLUMN MS_USER.USER_NAME IS '이름';
+COMMENT ON COLUMN MS_USER.BIRTH IS '생년월일';
+COMMENT ON COLUMN MS_USER.TEL IS '전화번호';
+COMMENT ON COLUMN MS_USER.ADDRESS IS '주소';
+COMMENT ON COLUMN MS_USER.REG_DATE IS '등록일자';
+COMMENT ON COLUMN MS_USER.UPD_DATE IS '수정일자';
+
+
+
+-- 67.
+-- MS_BOARD 테이블을 생성하시오.
+CREATE TABLE MS_BOARD (
+    BOARD_NO    NUMBER            NOT NULL PRIMARY KEY ,
+    TITLE       VARCHAR2(200)     NOT NULL ,
+    CONTENT     CLOB              NOT NULL ,
+    WRITER      VARCHAR2(100)     NOT NULL ,
+    HIT         NUMBER            NOT NULL ,
+    LIKE_CNT    NUMBER            NOT NULL ,
+    DEL_YN      CHAR(2)           NULL ,
+    DEL_DATE    DATE              NULL ,
+    REG_DATE    DATE              DEFAULT sysdate NOT NULL ,
+    UPD_DATE    DATE              DEFAULT sysdate NOT NULL 
+);
+
+COMMENT ON TABLE MS_BOARD IS '게시판';
+COMMENT ON COLUMN MS_BOARD.BOARD_NO IS '게시글 번호';
+COMMENT ON COLUMN MS_BOARD.TITLE IS '제목';
+COMMENT ON COLUMN MS_BOARD.CONTENT IS '내용';
+COMMENT ON COLUMN MS_BOARD.WRITER IS '작성자';
+COMMENT ON COLUMN MS_BOARD.HIT IS '조회수';
+COMMENT ON COLUMN MS_BOARD.LIKE_CNT IS '좋아요 수';
+COMMENT ON COLUMN MS_BOARD.DEL_YN IS '삭제여부';
+COMMENT ON COLUMN MS_BOARD.DEL_DATE IS '삭제일자';
+COMMENT ON COLUMN MS_BOARD.REG_DATE IS '등록일자';
+COMMENT ON COLUMN MS_BOARD.UPD_DATE IS '수정일자';
+
+
+-- 68.
+-- MS_FILE 테이블을 생성하시오.
+CREATE TABLE MS_FILE (
+      FILE_NO     NUMBER NOT NULL PRIMARY KEY ,
+      BOARD_NO    NUMBER NOT NULL ,
+      FILE_NAME   VARCHAR2(2000) NOT NULL ,
+      FILE_DATA   BLOB  NOT NULL ,
+      REG_DATE    DATE  DEFAULT sysdate NOT NULL ,
+      UPD_DATE    DATE  DEFAULT sysdate NOT NULL 
+);
+
+COMMENT ON TABLE MS_FILE IS '첨부파일';
+COMMENT ON COLUMN MS_FILE.FILE_NO IS '파일번호';
+COMMENT ON COLUMN MS_FILE.BOARD_NO IS '글번호';
+COMMENT ON COLUMN MS_FILE.FILE_NAME IS '파일명';
+COMMENT ON COLUMN MS_FILE.FILE_DATA IS '파일';
+COMMENT ON COLUMN MS_FILE.REG_DATE IS '등록일자';
+COMMENT ON COLUMN MS_FILE.UPD_DATE IS '수정일자';
+
+-- 69.
+-- MS_REPLY 테이블을 생성하시오.
+CREATE TABLE MS_REPLY (
+    REPLY_NO    NUMBER      NOT NULL PRIMARY KEY ,
+    BOARD_NO    NUMBER      NOT NULL ,
+    CONTENT     VARCHAR2(2000)    NOT NULL ,
+    WRITER      VARCHAR2(100)    NOT NULL ,
+    DEL_YN      CHAR(2)     DEFAULT 'N' NULL ,
+    DEL_DATE    DATE        NULL ,
+    REG_DATE    DATE        DEFAULT sysdate NOT NULL ,
+    UPD_DATE    DATE        DEFAULT sysdate NOT NULL 
+);
+
+COMMENT ON TABLE MS_REPLY IS '댓글';
+COMMENT ON COLUMN MS_REPLY.REPLY_NO IS '댓글번호';
+COMMENT ON COLUMN MS_REPLY.BOARD_NO IS '글번호';
+COMMENT ON COLUMN MS_REPLY.CONTENT IS '내용';
+COMMENT ON COLUMN MS_REPLY.WRITER IS '작성자';
+COMMENT ON COLUMN MS_REPLY.DEL_YN IS '삭제여부';
+COMMENT ON COLUMN MS_REPLY.DEL_DATE IS '삭제일자';
+COMMENT ON COLUMN MS_REPLY.REG_DATE IS '등록일자';
+COMMENT ON COLUMN MS_REPLY.UPD_DATE IS '수정일자';
+
+
+
+
+-- 70.
+-- human 계정에 있는 모든 데이터를 human2 계정으로 가져오기 위해서
+-- human.dmp 파일을 만들었다.
+-- human2 계정으로 접속하여, human.dmp 파일을 import 하시오.
+
+
+-- 1. human, human2  계정 생성
+-- 2. human.dmp 파일 import
+
+-- human 계정 생성
+ALTER SESSION SET "_ORACLE_SCRIPT" = TRUE;
+CREATE USER human IDENTIFIED BY 123456;
+ALTER USER human QUOTA UNLIMITED ON users;
+GRANT DBA TO human;
+
+-- human2 계정 생성
+ALTER SESSION SET "_ORACLE_SCRIPT" = TRUE;
+CREATE USER human2 IDENTIFIED BY 123456;
+ALTER USER human2 QUOTA UNLIMITED ON users;
+GRANT DBA TO human2;
+
+-- community.dmp 를 human 계정으로 가져오기 (CMD)
+imp userid=system/123456 file=C:\KHM\ORACLE\community.dmp fromuser=human touser=human
+
+-- human.dmp 를 human2 계정으로 가져오기 (CMD)
+imp userid=system/123456 file=C:\KHM\ORACLE\human.dmp fromuser=human touser=human2
+
+
+
+
+-- 71.
+-- human 계정이 소유하고 있는 데이터를
+-- "human_exp.dmp" 덤프파일로 export 하는 명령어를 작성하시오.
+
+-- human_exp.dmp 덤프파일 생성하기 (CMD)
+exp userid=human/123456 file=C:\KHM\ORACLE\human_exp.dmp 
+                        log=C:\KHM\ORACLE\human_exp.log
+
+-- 72.
+-- MS_BOARD 의 WRITER 속성을 NUMBER 타입으로 변경하고
+-- MS_USER 의 USER_NO 를 참조하는 외래키로 지정하시오.
+
+-- 1)
+-- 데이터 타입 변경
+ALTER TABLE MS_BOARD MODIFY WRITER NUMBER;
+
+-- 외래키 지정
+-- ALTER TABLE 테이블명 ADD CONSTRAINT 제약조건명
+-- FOREIGN KEY (외래키컬럼) REFERENCES 참조테이블(기본키);
+ALTER TABLE MS_BOARD ADD CONSTRAINT MS_BOARD_WRITER_FK
+FOREIGN KEY (WRITER) REFERENCES MS_USER(USER_NO);
+
+
+-- 2) 외래키 : MS_FILE (BOARD_NO)  ---->  MS_BOARD (BOARD_NO)
+ALTER TABLE MS_FILE ADD CONSTRAINT MS_FILE_BOARD_NO_FK
+FOREIGN KEY (BOARD_NO) REFERENCES MS_BOARD(BOARD_NO);
+
+
+-- 3) 외래키 : MS_REPLY (BOARD_NO)  ---->  MS_BOARD (BOARD_NO)
+ALTER TABLE MS_REPLY ADD CONSTRAINT MS_REPLY_BOARD_NO_FK
+FOREIGN KEY (BOARD_NO) REFERENCES MS_BOARD(BOARD_NO);
+
+
+-- 제약조건 삭제
+ALTER TABLE 테이블명 DROP CONSTRAINT 제약조건명;
+
+-- 73.
+-- MS_USER 테이블에 속성을 추가하시오.
+ALTER TABLE MS_USER ADD CTZ_NO CHAR(14) NOT NULL UNIQUE;
+ALTER TABLE MS_USER ADD GENDER CHAR(6) NOT NULL;
+
+COMMENT ON COLUMN MS_USER.CTZ_NO IS '주민번호';
+COMMENT ON COLUMN MS_USER.GENDER IS '성별';
+
+DESC MS_USER;
+
+
+-- 74.
+-- MS_USER 의 GENDER 속성이 ('여', '남', '기타') 값만 갖도록
+-- 제약조건을 추가하시오.
+-- CHECK 제약조건 추가
+ALTER TABLE MS_USER
+ADD CONSTRAINT MS_USER_GENDER_CHECK
+CHECK (gender IN ('여', '남', '기타') )
+;
+
+-- 75.
+-- MS_FILE 테이블에 확장자(EXT) 속성을 추가하시오.
+ALTER TABLE MS_FILE ADD EXT VARCHAR2(10) NULL;
+COMMENT ON COLUMN MS_FILE.EXT IS '확장자';
+
+-- 76.
+-- 
+MERGE INTO MS_FILE T        -- 대상 테이블 지정
+-- 사용할 데이터의 자원을 지정
+USING ( SELECT FILE_NO, FILE_NAME FROM MS_FILE ) F
+-- ON (update 될 조건)
+ON (T.FILE_NO = F.FILE_NO)
+-- 매치조건에 만족한 경우
+WHEN MATCHED THEN
+    -- SUBSTR( 문자열, 시작번호 )
+    -- ex. SUBSTR( '/upload/강아지.png', 12 ) --> png
+    UPDATE SET T.EXT = SUBSTR(F.FILE_NAME, INSTR(F.FILE_NAME, '.', -1) +1 )
+    DELETE WHERE SUBSTR(F.FILE_NAME, INSTR(F.FILE_NAME, '.', -1) +1 )
+                NOT IN ('jpeg', 'jpg', 'gif', 'png')
+-- WHEN NOT MATCHED THEN
+-- [매치가 안 될 때,]
+;
+
+
+-- 파일 추가
+INSERT INTO MS_FILE ( 
+            FILE_NO, BOARD_NO, FILE_NAME, FILE_DATA, REG_DATE, UPD_DATE, EXT
+            )
+VALUES (1, 1, '강아지.png', '123', sysdate, sysdate, 'jpg' );
+
+
+INSERT INTO MS_FILE ( 
+            FILE_NO, BOARD_NO, FILE_NAME, FILE_DATA, REG_DATE, UPD_DATE, EXT
+            )
+VALUES (2, 1, 'main.html', '123', sysdate, sysdate, 'jpg' );
+
+
+-- 게시글 추가
+INSERT INTO MS_BOARD (
+                BOARD_NO, TITLE, CONTENT, WRITER, HIT, LIKE_CNT,
+                DEL_YN, DEL_DATE, REG_DATE, UPD_DATE
+                )
+VALUES (
+        1, '제목', '내용', 1, 0, 0, 'N', NULL, sysdate, sysdate
+        );
+        
+-- 유저 추가
+INSERT INTO MS_USER(
+                USER_NO, USER_ID, USER_PW, USER_NAME, BIRTH,
+                TEL, ADDRESS, REG_DATE, UPD_DATE,
+                CTZ_NO, GENDER
+                )
+VALUES ( 1, 'ALOHA', '123456', '김휴먼', TO_DATE('2003/01/01', 'YYYY/MM/DD'),
+         '010-1234-1234', '영등포', sysdate, sysdate,
+         '030101-3334444', '기타');
+            
+        
+SELECT * FROM MS_USER;
+SELECT * FROM MS_BOARD;
+SELECT * FROM MS_FILE;
+
+
+-- 77.
+-- 테이블 MS_FILE 의 EXT 속성이
+-- ('jpg', 'jpeg', 'gif', 'png') 값을 갖도록 하는 제약조건을 추가하시오.
+
+ALTER TABLE MS_FILE
+ADD CONSTRAINT MS_FILE_EXT_CHECK
+CHECK (EXT IN('jpg', 'jpeg', 'gif', 'png') );
+
+ALTER TABLE MS_FILE
+DROP CONSTRAINT MS_FILE_EXT_CHECK;
+
+
+
+-- 78.
+-- MS_USER, MS_BOARD, MS_FILE, MS_REPLY 테이블의
+-- 모든 데이터를 삭제하는 명령어를 작성하시오.
+TRUNCATE TABLE MS_USER;
+TRUNCATE TABLE MS_BOARD;
+TRUNCATE TABLE MS_FILE;
+TRUNCATE TABLE MS_REPLY;
+
+DELETE FROM MS_USER;
+DELETE FROM MS_BOARD;
+DELETE FROM MS_FILE;
+DELETE FROM MS_REPLY;
+
+SELECT * FROM MS_USER;
+SELECT * FROM MS_BOARD;
+SELECT * FROM MS_FILE;
+SELECT * FROM MS_REPLY;
+
+-- DDL, DML , DCL
+
+-- DELETE vs TRUNCATE
+-- * DELETE - 데이터 조작어 (DML)
+--   - 한 행 단위로 데이터를 삭제한다
+--   - COMMIT, ROLLABCK 를 이용하여 변경사항을 적용하거나 되돌릴 수 있음
+
+-- * TRUNCATE - 데이터 정의어 (DDL)
+--   - 모든 행을 삭제한다
+--   - 삭제된 데이터를 되돌릴 수 없음
+
+
+-- 79.
+-- 테이블의 속성을 삭제하시오.
+-- * MS_BOARD 테이블의 WRITER 속성
+-- * MS_FILE 테이블의 BOARD_NO 속성
+-- * MS_REPLY 테이블의 BOARD_NO 속성
+ALTER TABLE MS_BOARD DROP COLUMN WRITER;
+ALTER TABLE MS_FILE DROP COLUMN BOARD_NO;
+ALTER TABLE MS_REPLY DROP COLUMN BOARD_NO;
+
+-- 80.
+-- 각 테이블에 속성들을 추가한 뒤, 외래키로 지정하시오.
+-- 해당 외래키에 대하여 참조 테이블의 데이터 삭제 시,
+-- 연결된 속성의 값도 삭제하는 옵션도 지정하시오.
+
+-- 1)
+-- MS_BOARD 에 WRITER 속성 추가
+ALTER TABLE MS_BOARD ADD WRITER NUMBER NOT NULL;
+
+-- WRITER 속성을 외래키로 지정
+-- + 참조 테이블 데이터 삭제 시, 연쇄적으로 함께 삭제하는 옵션 지정
+ALTER TABLE MS_BOARD
+ADD CONSTRAINT MS_BOARD_WRITER_FK 
+FOREIGN KEY (WRITER) REFERENCES MS_USER(USER_NO)
+ON DELETE CASCADE;
+-- ON DELETE [NO ACTION, RESTRICT, CASCADE, SET NULL]
+-- * RESTRICT : 자식 테이블의 데이터가 존재하면, 삭제 안 함
+-- * CASCADE  : 자식 테이블의 데이터도 함께 삭제
+-- * SET NULL : 자식 테이블의 데이터를 NULL 로 지정
+
+-- 2)
+-- MS_FILE 에 BOARD_NO 속성 추가
+ALTER TABLE MS_FILE ADD BOARD_NO NUMBER NOT NULL;
+
+-- BOARD_NO 속성을 외래키로 추가
+-- 참조테이블 : MS_BOARD, 참조 속성 : BOARD_NO
+-- + 참조 테이블 데이터 삭제 시, 연쇄적으로 함께 삭제하는 옵션 지정
+ALTER TABLE MS_FILE
+ADD CONSTRAINT MS_FILE_BOARD_NO_FK FOREIGN KEY(BOARD_NO)
+REFERENCES MS_BOARD(BOARD_NO)
+ON DELETE CASCADE;
+
+-- 3)
+-- MS_REPLY 에 BOARD_NO 속성 추가
+ALTER TABLE MS_REPLY ADD BOARD_NO NUMBER NOT NULL;
+
+-- BOARD_NO 속성을 외래키로 추가
+-- 참조테이블 : MS_BOARD, 참조 속성 : BOARD_NO
+-- + 참조 테이블 데이터 삭제 시, 연쇄적으로 함께 삭제하는 옵션 지정
+ALTER TABLE MS_REPLY
+ADD CONSTRAINT MS_REPLY_BOARD_NO_FK FOREIGN KEY(BOARD_NO)
+REFERENCES MS_BOARD(BOARD_NO)
+ON DELETE CASCADE;
+
+
+SELECT * FROM MS_USER;
+SELECT * FROM MS_BOARD;
+SELECT * FROM MS_FILE;
+
+-- 회원탈퇴 (회원번호:1)
+DELETE FROM MS_USER WHERE USER_NO = 1;
+
+-- ON DELETE CASCADE 옵션으로 외래키 지정 시,
+-- MS_USER 의 데이터를 삭제 하면,
+-- MS_BOARD 의 참조된 데이터도 연쇄적으로 삭제된다.
+
+-- MS_BOARD 의 데이터가 삭제 되면,
+-- MS_FILE, MS_FILE 의 참조된 데이터도 연쇄적으로 삭제된다.
+
+
+-- 외래키 제약조건 정리
+ALTER TABLE 테이블명
+ADD CONSTRAINT 제약조건명 FOREIGN KEY (외래키 속성)
+REFERENCES 참조테이블(참조 속성);
+-- 옵션
+-- ON UPDATE            -- 참조 테이블 수정 시,
+--  * CASCADE           : 자식 데이터 수정
+--  * SET NULL          : 자식 데이터는 NULL 
+--  * SET DEFAULT       : 자식 데이터는 기본값
+--  * RESTRICT          : 자식 테이블의 참조하는 데이터가 존재하면, 부모 데이터 수정 불가
+--  * NO ACTION         : 아무런 행위도 취하지 않는다 (기본값)
+
+-- ON DELETE            -- 참조 테이블 삭제 시,
+--  * CASCADE           : 자식 데이터 삭제
+--  * SET NULL          : 자식 데이터는 NULL 
+--  * SET DEFAULT       : 자식 데이터는 기본값
+--  * RESTRICT          : 자식 테이블의 참조하는 데이터가 존재하면, 부모 데이터 삭제 불가
+--  * NO ACTION         : 아무런 행위도 취하지 않는다 (기본값)
+
+
+
+
+
+-- ▶ 서브쿼리
+/*
+    : SQL 문 내부에 사용하는 SELECT 문
+    * 메인쿼리 : 서브쿼리를 사용하는 최종적인 SELECT 문
+    
+    * 서브쿼리 종류
+    - 스칼라 서브쿼리    : SELECT 절에서 사용하는 서브쿼리
+    - 인라인 뷰         : FROM 절에서 사용하는 서브쿼리
+    - 서브 쿼리         : WHERE 절에서 사용하는 서브쿼리
+*/
+
+-- 81.
+-- EMPLOYEE, DEPARTMENT, JOB 테이블을 사용하여
+-- 스칼라 서브쿼리로 출력결과와 같이 조회하시오.
+SELECT * FROM employee;
+SELECT * FROM department;
+SELECT * FROM job;
+
+SELECT emp_id AS 사원번호
+      ,emp_name AS 직원명
+      ,(SELECT dept_title FROM department d WHERE d.dept_id = e.dept_code) 부서명
+      ,(SELECT job_name FROM job j WHERE j.job_code = e.job_code) 직급명 
+FROM employee e;
+
+-- JOIN
+-- INNER JOIN(내부조인)
+SELECT e.emp_id 사원번호
+      ,e.emp_name 직원명
+      ,d.dept_title 부서명
+      ,j.job_name 직급명
+FROM employee e
+     JOIN department d ON e.dept_code = d.dept_id
+     JOIN job j ON e.job_code = j.job_code
+;
+
+-- EQUI JOIN
+SELECT e.emp_id 사원번호
+      ,e.emp_name 직원명
+      ,d.dept_title 부서명
+      ,j.job_name 직급명
+FROM employee e, department d, job j
+WHERE e.dept_code = d.dept_id
+  AND e.job_code = j.job_code
+;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
