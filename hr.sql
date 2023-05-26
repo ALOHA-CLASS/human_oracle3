@@ -441,6 +441,9 @@ FROM employees;
 -- : 문자형 데이터를 날짜형 데이터로 변환하는 함수
 SELECT 20230522 AS 문자
       ,TO_DATE('20230522', 'YYYYMMDD') AS 날짜
+      ,TO_DATE('2023.05.22', 'YYYY.MM.DD') AS 날짜2
+      ,TO_DATE('2023/05/22', 'YYYY/MM/DD') AS 날짜3
+      ,TO_DATE('2023-05-22', 'YYYY-MM-DD') AS 날짜4
 FROM dual;
 
 -- 38.
@@ -546,6 +549,7 @@ ORDER BY "커미션(%)" DESC
 
 SELECT first_name 이름
       ,salary 급여
+      ,commission_pct 
       ,NVL(commission_pct, 0) 커미션
       ,NVL2(commission_pct, salary+(salary*commission_pct), salary) 최종급여
 FROM employees
@@ -2079,13 +2083,7 @@ DROP INDEX IDX_MS_USER_NAME;
 
 
 
-
-
-
-
-
-
-
+-- 추가 실습
 
 
 
