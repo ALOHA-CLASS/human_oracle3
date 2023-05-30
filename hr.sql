@@ -2408,6 +2408,31 @@ SELECT e.emp_name
        ON dept_code = d.dept_id;
 
 
+-- 데이터 사전 뷰
+SELECT *
+  FROM user_tables
+WHERE table_name LIKE '%EMP%'
+;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
