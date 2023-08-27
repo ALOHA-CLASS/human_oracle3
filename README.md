@@ -1,4 +1,4 @@
-# ALOHA / 휴먼교육센터 오라클 데이터베이스 실습
+# ALOHA CLASS 오라클 데이터베이스 실습
 
 ## ORACLE 설치
 https://youtu.be/_JMsueZgdc0?list=PL4C2AmBC9jObqw1BDuUjTl50CMu1CpiiL
@@ -104,5 +104,5 @@ exp userid=system/123456 file='경로\덤프파일명.dmp' log='경로\로그파
 
 ### 1:1 레슨 [숨고 프로그래밍 레슨](https://soomgo.com/profile/users/717340)
 
-### 현장강의 [휴먼교육센터](http://www.human.or.kr/) 02-3667-3688
+### 현장강의 [더조은아카데미](https://bu.tjoeun.co.kr/) 032.521.8889                                 
 
