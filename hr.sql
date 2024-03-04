@@ -2060,7 +2060,7 @@ SELECT * FROM ms_user;
 
 
 -- 103.
--- 시퀀스 SEQ_MS_USER 의 최댓ㄱ밧을 100,000,000 으로 수정하시오.
+-- 시퀀스 SEQ_MS_USER 의 최댓값을 100,000,000 으로 수정하시오.
 ALTER SEQUENCE SEQ_MS_USER MAXVALUE 100000000;
 
 
